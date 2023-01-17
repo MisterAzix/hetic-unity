@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class playerMovement : MonoBehaviour
+public class playerMovement : NetworkBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float groundDrag;
@@ -49,8 +50,7 @@ public class playerMovement : MonoBehaviour
         air
     }
 
- 
-    void Start()
+    public override void OnNetworkSpawn()
     {
         readyToJump = true;
         rb = GetComponent<Rigidbody>();
@@ -58,9 +58,20 @@ public class playerMovement : MonoBehaviour
 
         startYScale = transform.localScale.y;
     }
+    //void Start()
+    //{
+    //    if (!IsOwner) return;
+    //    readyToJump = true;
+    //    rb = GetComponent<Rigidbody>();
+    //    rb.freezeRotation = true;
+
+    //    startYScale = transform.localScale.y;
+    //}
 
     void Update()
     {
+        if (IsOwner && IsLocalPlayer)
+        {
         grounded = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, whatIsGround);
         MyInput();
         SpeedControl();
@@ -70,12 +81,16 @@ public class playerMovement : MonoBehaviour
             rb.drag = groundDrag;
         else
             rb.drag = 0;
+        }
 
     }
 
     private void FixedUpdate()
     {
+        if (IsOwner && IsLocalPlayer)
+        {
         MovePlayer();
+        }
     }
     private void MyInput()
     {

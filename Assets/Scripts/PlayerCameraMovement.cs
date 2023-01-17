@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerCameraMovement : MonoBehaviour
+public class PlayerCameraMovement : NetworkBehaviour
 {
     [SerializeField] private float sensX;
     [SerializeField] private float sensY;
@@ -12,14 +13,28 @@ public class PlayerCameraMovement : MonoBehaviour
     float xRotation;
     float yRotation;
 
-    private void Start()
+
+    public override void OnNetworkSpawn()
     {
+        if(IsOwner && IsLocalPlayer)
+        {
+        if(gameObject.GetComponent<Camera>().enabled == false)
+            gameObject.GetComponent<Camera>().enabled = true;
+        }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+    //private void Start()
+    //{
+
+    //    Cursor.lockState = CursorLockMode.Locked;
+    //    Cursor.visible = false;
+    //}
 
     private void Update()
     {
+        if (IsOwner && IsLocalPlayer)
+        {
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
 
@@ -30,6 +45,8 @@ public class PlayerCameraMovement : MonoBehaviour
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
         player.transform.rotation = Quaternion.Euler(0, yRotation, 0);
         gunPosition.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
+
+        }
 
     }
 }
