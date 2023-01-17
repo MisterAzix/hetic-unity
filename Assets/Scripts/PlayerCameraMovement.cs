@@ -6,7 +6,8 @@ public class PlayerCameraMovement : MonoBehaviour
 {
     [SerializeField] private float sensX;
     [SerializeField] private float sensY;
-    [SerializeField] private Transform orientation;
+    [SerializeField] private Transform player;
+    [SerializeField] private Transform gunPosition;
 
     float xRotation;
     float yRotation;
@@ -27,7 +28,8 @@ public class PlayerCameraMovement : MonoBehaviour
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
         transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
-        orientation.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        player.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        gunPosition.transform.rotation = Quaternion.Euler(xRotation, yRotation, 0);
 
     }
 }
