@@ -1,11 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ShootScript : MonoBehaviour
+public class ShootScript : NetworkBehaviour
 {
     [SerializeField] private Transform cam;
-    [SerializeField] private float bulletVelocity;
     [SerializeField] private GameObject bullet;
     [SerializeField] private Transform firePosition;
 
@@ -14,15 +14,24 @@ public class ShootScript : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            GameObject projectile = Instantiate(bullet, firePosition.position, cam.rotation);
-            Rigidbody projectileRB = projectile.GetComponent<Rigidbody>();
+            if (IsOwner)
+            {
+                ShootServerRpc();
+            }
 
-            Vector3 forceToAdd = cam.transform.forward * bulletVelocity;
-
-            projectileRB.AddForce(forceToAdd, ForceMode.Impulse);
+           
         }
 
     }
+  
 
-    
+    [ServerRpc]
+    private void ShootServerRpc()
+    {
+        GameObject projectile = Instantiate(bullet, firePosition.position, cam.rotation);
+        projectile.GetComponent<NetworkObject>().Spawn(true);
+    }
+
+   
+
 }
