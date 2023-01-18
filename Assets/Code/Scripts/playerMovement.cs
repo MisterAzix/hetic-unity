@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class playerMovement : NetworkBehaviour
 {
+
+
+    private GameObject[] spawningPoints;
+
+
+    [Header("Objects to not shrink")]
+    [SerializeField] private Transform gunObject;
+
     [Header("Movement")]
     [SerializeField] private float groundDrag;
     [SerializeField] private float jumpForce;
@@ -50,23 +58,25 @@ public class playerMovement : NetworkBehaviour
         air
     }
 
+
+
     public override void OnNetworkSpawn()
     {
-        readyToJump = true;
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
+        
+        
+            readyToJump = true;
+            rb = GetComponent<Rigidbody>();
+            rb.freezeRotation = true;
 
-        startYScale = transform.localScale.y;
+            startYScale = transform.localScale.y;
+        
+            spawningPoints = GameObject.FindGameObjectsWithTag("SpawningPoint");
+       
+
+            SpawnPlayerServerRpc();
+        
     }
-    //void Start()
-    //{
-    //    if (!IsOwner) return;
-    //    readyToJump = true;
-    //    rb = GetComponent<Rigidbody>();
-    //    rb.freezeRotation = true;
-
-    //    startYScale = transform.localScale.y;
-    //}
+  
 
     void Update()
     {
@@ -108,11 +118,16 @@ public class playerMovement : NetworkBehaviour
 
         if (Input.GetKeyDown(crouchInput))
         {
+            gunObject.localScale = new Vector3(gunObject.localScale.x, 1+ crouchYScale, gunObject.localScale.z);
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
         if (Input.GetKeyUp(crouchInput))
+        { 
+            gunObject.localScale = new Vector3(gunObject.localScale.x, 1, gunObject.localScale.z);
+
             transform.localScale = new Vector3(transform.localScale.x, startYScale, transform.localScale.z);
+        }
     }
 
     private void StateHandler()
@@ -212,5 +227,12 @@ public class playerMovement : NetworkBehaviour
     public Vector3 GetSlopeMoveDirection(Vector3 direction)
     {
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void SpawnPlayerServerRpc()
+    {
+        int spawningPositionIndex = Random.Range(0, spawningPoints.Length);
+        transform.position = spawningPoints[spawningPositionIndex].transform.position;
     }
 }
