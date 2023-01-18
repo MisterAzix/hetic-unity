@@ -12,6 +12,7 @@ public class NetworkManagerUI : MonoBehaviour
 
     private void Awake()
     {
+       
         serverBtn.onClick.AddListener(() =>
         {
             NetworkManager.Singleton.StartServer();
