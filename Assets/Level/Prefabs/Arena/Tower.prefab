@@ -113,6 +113,7 @@ Transform:
   m_Children:
   - {fileID: 5705456871634091933}
   - {fileID: 6244822333486771916}
+  - {fileID: 1707330247983895090}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2429,7 +2430,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4043535580645081189, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 9c3f0241b8b0c43658e438250292194d, type: 2}
     - target: {fileID: 8718778828885884488, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_RootOrder
@@ -3313,7 +3314,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4043535580645081189, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 9d86c5e48dbc544129a36ad4c850278e, type: 2}
     - target: {fileID: 8718778828885884488, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_RootOrder
@@ -3577,7 +3578,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4043535580645081189, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 7beaacc38b0564692b665c294209b545, type: 2}
     - target: {fileID: 8718778828885884488, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_RootOrder
@@ -4399,7 +4400,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4043535580645081189, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 7beaacc38b0564692b665c294209b545, type: 2}
     - target: {fileID: 8718778828885884488, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_RootOrder
@@ -4911,7 +4912,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4043535580645081189, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_Materials.Array.data[0]
-      value: 
+      value:
       objectReference: {fileID: 2100000, guid: 7beaacc38b0564692b665c294209b545, type: 2}
     - target: {fileID: 8718778828885884488, guid: 652d3b2abc6d44b878d80d3e027e8d1e, type: 3}
       propertyPath: m_RootOrder

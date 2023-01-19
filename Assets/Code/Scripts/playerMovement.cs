@@ -7,7 +7,9 @@ public class playerMovement : NetworkBehaviour
 {
 
 
-    private GameObject[] spawningPoints;
+    private GameObject[] spawningPointsArr;
+    private List<GameObject> spawningPoints;
+    private Transform playerSpawningPoint;
 
 
     [Header("Objects to not shrink")]
@@ -52,6 +54,7 @@ public class playerMovement : NetworkBehaviour
 
     public MovementState state;
     public enum MovementState {
+        dead,
         walking,
         sprinting,
         crouching,
@@ -70,10 +73,19 @@ public class playerMovement : NetworkBehaviour
 
             startYScale = transform.localScale.y;
         
-            spawningPoints = GameObject.FindGameObjectsWithTag("SpawningPoint");
-       
+            spawningPointsArr = GameObject.FindGameObjectsWithTag("SpawningPoint");
+            spawningPoints = new List<GameObject>(spawningPointsArr);
+            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+        if(IsOwner&& IsLocalPlayer)
+        {
 
-            SpawnPlayerServerRpc();
+            playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
+            transform.position = playerSpawningPoint.position;
+            Debug.Log("spawning !");
+
+        }
+            spawningPoints.RemoveAt(spawningPositionIndex);
+        //SpawnPlayerServerRpc();
         
     }
   
@@ -97,9 +109,9 @@ public class playerMovement : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (IsOwner && IsLocalPlayer)
+        if (IsOwner && IsLocalPlayer )
         {
-        MovePlayer();
+         MovePlayer();
         }
     }
     private void MyInput()
@@ -230,9 +242,25 @@ public class playerMovement : NetworkBehaviour
     }
 
     [ServerRpc(RequireOwnership =false)]
-    private void SpawnPlayerServerRpc()
+    public void SpawnPlayerServerRpc()
     {
-        int spawningPositionIndex = Random.Range(0, spawningPoints.Length);
-        transform.position = spawningPoints[spawningPositionIndex].transform.position;
+        if (IsOwner)
+        {
+            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+            playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
+            transform.position = playerSpawningPoint.position;
+            spawningPoints.RemoveAt(spawningPositionIndex);
+            Debug.Log("spawning !");
+        }
+        
+    }
+
+    public void ResetSpawn()
+    {
+        if(IsOwner && IsLocalPlayer)
+        {
+        Debug.Log(playerSpawningPoint);
+        gameObject.transform.position = playerSpawningPoint.position;
+        }
     }
 }

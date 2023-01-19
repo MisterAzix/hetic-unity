@@ -365,6 +365,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerHealth:
     m_InternalValue: 100
+  maxPlayerHealth: 100
 --- !u!1001 &3307077785943535677
 PrefabInstance:
   m_ObjectHideFlags: 0

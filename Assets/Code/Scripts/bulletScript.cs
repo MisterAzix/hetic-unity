@@ -47,7 +47,7 @@ public class bulletScript : NetworkBehaviour
 
             var playerHit = hit.transform.GetComponent<NetworkObject>();
 
-            if(playerHit != null)
+            if(playerHit != null && IsOwner)
             {
                 UpdatePlayerHealthServerRpc(10, playerHit.OwnerClientId);
             }
@@ -61,29 +61,35 @@ public class bulletScript : NetworkBehaviour
     [ServerRpc]
     private void DestroyBulletServerRpc()
     {
-        gameObject.GetComponent<NetworkObject>().Despawn();
-        Destroy(gameObject);
+        if (IsOwner)
+        {
+            gameObject.GetComponent<NetworkObject>().Despawn();
+            Destroy(gameObject);
+        }
     }
 
     IEnumerator DestroyCoroutine()
     {
         yield return new WaitForSeconds(2f);
 
-        gameObject.GetComponent<NetworkObject>().Despawn();
-        Destroy(gameObject);
+        DestroyBulletServerRpc();
     }
    
     [ServerRpc]
     public void UpdatePlayerHealthServerRpc(int damage, ulong clientId)
     {
+        var owner = NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject;
         var playerToDamage = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerStats>();
+        var playerToKill = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
 
         if (playerToDamage != null && playerToDamage.playerHealth.Value > 0)
         {
             playerToDamage.playerHealth.Value -= damage;
-        }
 
-        NotifyHealthChangedClientRpc(damage, new ClientRpcParams
+        }
+ 
+
+        NotifyHealthChangedClientRpc(playerToDamage.playerHealth.Value, new ClientRpcParams
         {
             Send = new ClientRpcSendParams
             {
@@ -93,11 +99,18 @@ public class bulletScript : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void NotifyHealthChangedClientRpc(int damage, ClientRpcParams clientRpcParams = default)
+    public void NotifyHealthChangedClientRpc( int playerHealth, ClientRpcParams clientRpcParams = default)
     {
-        if (IsOwner) return;
 
-        Debug.Log("Damage taken ! " + damage);
+
+
+    }
+
+    [ServerRpc]
+    public void KillAPlayerServerRpc(ulong clientId)
+    {
+        Debug.Log("client id to kill : " + clientId);
+        
 
     }
 }
