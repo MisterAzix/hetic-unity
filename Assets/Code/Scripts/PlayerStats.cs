@@ -8,11 +8,13 @@ using System;
 
 public class PlayerStats : NetworkBehaviour
 {
-    [SerializeField] public NetworkVariable<int> playerHealth = new NetworkVariable<int>(100);
     [SerializeField] private int maxPlayerHealth;
+    [SerializeField] private int respawnTime = 5;
     // [SerializeField] private TMP_InputField playerNameInputField;
-    [SerializeField] public NetworkVariable<FixedString64Bytes> networkPlayerName = new NetworkVariable<FixedString64Bytes>("");
     [SerializeField] private TMP_Text playerName;
+
+    [SerializeField] public NetworkVariable<int> playerHealth = new NetworkVariable<int>(100);
+    [SerializeField] public NetworkVariable<FixedString64Bytes> networkPlayerName = new NetworkVariable<FixedString64Bytes>("");
 
     public override void OnNetworkSpawn()
     {
@@ -21,13 +23,13 @@ public class PlayerStats : NetworkBehaviour
         {
             AssignPlayerNameServerRpc();
         } */
+
         playerHealth.OnValueChanged += HealthOnValueChanged;
         // networkPlayerName.OnValueChanged += HandlePlayerNameChanged;
     }
 
     private void HealthOnValueChanged(int prevHealth, int nextHealth)
     {
-        //Debug.Log(OwnerClientId + "-> prevHealth : " + prevHealth + "newtHealth : " + nextHealth + "ClientId");
         if (nextHealth <= 0)
         {
             KillPlayer();
@@ -37,6 +39,8 @@ public class PlayerStats : NetworkBehaviour
     private void KillPlayer()
     {
         Debug.Log($"[{DateTime.Now.ToString("HH:mm:ss\\Z")}] {OwnerClientId}: Died!");
+        ToggleRespawnUI();
+
         transform.GetComponent<playerMovement>().enabled = false;
         transform.GetChild(0).GetComponent<PlayerCameraMovement>().enabled = false;
         transform.GetComponent<ShootScript>().enabled = false;
@@ -47,7 +51,16 @@ public class PlayerStats : NetworkBehaviour
 
     private IEnumerator DeathCoroutine()
     {
-        yield return new WaitForSeconds(5f);
+        int counter = respawnTime;
+        UpdateRespawnTimer(counter);
+        while (counter > 0)
+        {
+            yield return new WaitForSeconds(1f);
+            counter--;
+            UpdateRespawnTimer(counter);
+        }
+        ToggleRespawnUI();
+
         var playerMovement = transform.GetComponent<playerMovement>();
         playerMovement.enabled = true;
         playerMovement.ResetSpawn();
@@ -71,11 +84,59 @@ public class PlayerStats : NetworkBehaviour
         });
     }
 
-
     [ClientRpc]
     public void NotifyHealthChangedClientRpc(int playerHealth, ClientRpcParams clientRpcParams = default)
     {
-        GameObject.Find("Life").GetComponent<TMP_Text>().text = playerHealth >= 0 ? playerHealth.ToString() : "0";
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject life = FindRecursive(canvas, "Life");
+        if (life)
+        {
+            life.GetComponent<TMP_Text>().text = playerHealth >= 0 ? playerHealth.ToString() : "0";
+        }
+    }
+
+    private void UpdateRespawnTimer(int counter)
+    {
+        if (IsOwner && IsLocalPlayer)
+        {
+            GameObject canvas = GameObject.Find("Canvas");
+            GameObject respawnTimer = FindRecursive(canvas, "RespawnTimer");
+            if (respawnTimer)
+            {
+                respawnTimer.GetComponent<TMP_Text>().text = $"Respawn in {counter}...";
+            }
+        }
+    }
+
+    private void ToggleRespawnUI()
+    {
+        if (IsOwner && IsLocalPlayer)
+        {
+            GameObject canvas = GameObject.Find("Canvas");
+            GameObject gameUI = FindRecursive(canvas, "GameUI");
+            GameObject deathUI = FindRecursive(canvas, "DeathUI");
+
+            if (gameUI && deathUI)
+            {
+                gameUI.SetActive(!gameUI.activeSelf);
+                deathUI.SetActive(!deathUI.activeSelf);
+            }
+        }
+    }
+
+    private static GameObject FindRecursive(GameObject obj, string search)
+    {
+        GameObject result = null;
+        foreach (Transform child in obj.transform)
+        {
+            if (child.name.Equals(search)) return child.gameObject;
+
+            result = FindRecursive(child.gameObject, search);
+
+            if (result) break;
+        }
+
+        return result;
     }
 
     /* [ServerRpc(RequireOwnership = false)]
