@@ -29,7 +29,7 @@ public class PlayerStats : NetworkBehaviour
     private void HealthOnValueChanged(int prevHealth, int nextHealth)
     {
         Debug.Log("prevHealth : " + prevHealth + "newtHealth : " + nextHealth + "ClientId" + OwnerClientId);
-        if (nextHealth == 0)
+        if (nextHealth <= 0)
         {
             KillPlayer();
         }
@@ -61,9 +61,7 @@ public class PlayerStats : NetworkBehaviour
         transform.GetChild(0).GetComponent<PlayerCameraMovement>().enabled = true;
         transform.GetComponent<ShootScript>().enabled = true;
 
-
         ResetHealthServerRpc();
-
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -77,8 +75,5 @@ public class PlayerStats : NetworkBehaviour
     {
         networkPlayerName.Value = GameObject.Find("InputName").GetComponent<TMP_InputField>().text;
         playerName.text = networkPlayerName.Value.ToString();
-
     }
-
-
 }

@@ -6,6 +6,8 @@ using UnityEngine;
 public class bulletScript : NetworkBehaviour
 {
     [SerializeField] float bulletVelocity;
+    [SerializeField] int bulletDamage = 25;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -20,22 +22,27 @@ public class bulletScript : NetworkBehaviour
        
     }
 
-    private void FixedUpdate()
+    /* private void FixedUpdate()
     {
         CheckHit();
-    }
+    } */
 
     private void OnCollisionEnter(Collision collision)
     {
 
-        //if (collision.gameObject.tag == "Player")
-        //{
+        if (collision.gameObject.tag == "Player" && IsOwner)
+        {
+            var playerHit = collision.gameObject.GetComponent<NetworkObject>();
+            UpdatePlayerHealthServerRpc(25, playerHit.OwnerClientId);
+        }
+        if (IsOwner)
+        {
+            DestroyBulletServerRpc();
+        }
 
-        //}
-       
     }
 
-    private void CheckHit()
+    /* private void CheckHit()
     {
         RaycastHit hit;
 
@@ -49,23 +56,20 @@ public class bulletScript : NetworkBehaviour
 
             if(playerHit != null && IsOwner)
             {
-                UpdatePlayerHealthServerRpc(10, playerHit.OwnerClientId);
+                UpdatePlayerHealthServerRpc(25, playerHit.OwnerClientId);
             }
             if (IsOwner)
             {
                 DestroyBulletServerRpc();
             }
         }
-    }
+    } */
 
     [ServerRpc]
     private void DestroyBulletServerRpc()
     {
-        if (IsOwner)
-        {
-            gameObject.GetComponent<NetworkObject>().Despawn();
-            Destroy(gameObject);
-        }
+        gameObject.GetComponent<NetworkObject>().Despawn();
+        Destroy(gameObject);
     }
 
     IEnumerator DestroyCoroutine()

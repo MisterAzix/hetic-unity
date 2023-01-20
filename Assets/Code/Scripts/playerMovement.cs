@@ -61,34 +61,30 @@ public class playerMovement : NetworkBehaviour
         air
     }
 
-
-
     public override void OnNetworkSpawn()
     {
-        
-        
-            readyToJump = true;
-            rb = GetComponent<Rigidbody>();
-            rb.freezeRotation = true;
+        readyToJump = true;
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
 
-            startYScale = transform.localScale.y;
+        startYScale = transform.localScale.y;
         
-            spawningPointsArr = GameObject.FindGameObjectsWithTag("SpawningPoint");
-            spawningPoints = new List<GameObject>(spawningPointsArr);
-            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+        spawningPointsArr = GameObject.FindGameObjectsWithTag("SpawningPoint");
+        spawningPoints = new List<GameObject>(spawningPointsArr);
+        int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+
         if(IsOwner&& IsLocalPlayer)
         {
-
             playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
             transform.position = playerSpawningPoint.position;
             Debug.Log("spawning !");
 
         }
-            spawningPoints.RemoveAt(spawningPositionIndex);
+
+        spawningPoints.RemoveAt(spawningPositionIndex);
         //SpawnPlayerServerRpc();
         
     }
-  
 
     void Update()
     {
@@ -104,16 +100,16 @@ public class playerMovement : NetworkBehaviour
         else
             rb.drag = 0;
         }
-
     }
 
     private void FixedUpdate()
     {
         if (IsOwner && IsLocalPlayer )
         {
-         MovePlayer();
+            MovePlayer();
         }
     }
+
     private void MyInput()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -134,6 +130,7 @@ public class playerMovement : NetworkBehaviour
             transform.localScale = new Vector3(transform.localScale.x, crouchYScale, transform.localScale.z);
             rb.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
+
         if (Input.GetKeyUp(crouchInput))
         { 
             gunObject.localScale = new Vector3(gunObject.localScale.x, 1, gunObject.localScale.z);
@@ -213,7 +210,7 @@ public class playerMovement : NetworkBehaviour
         exitingSlope = true;
         rb.velocity = new Vector3(rb.velocity.x, 0f, rb.velocity.z);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse );
+        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
 
     private void ResetJump()
@@ -230,8 +227,9 @@ public class playerMovement : NetworkBehaviour
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
 
             if (angle < maxSlopeAngle && angle != 0)
-                Debug.Log(true);
+            {
                 return true;
+            }
         }
         return false;
     }
@@ -257,10 +255,20 @@ public class playerMovement : NetworkBehaviour
 
     public void ResetSpawn()
     {
-        if(IsOwner && IsLocalPlayer)
+        if (IsLocalPlayer)
         {
-        Debug.Log(playerSpawningPoint);
-        gameObject.transform.position = playerSpawningPoint.position;
+            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+            playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
+            transform.position = playerSpawningPoint.position;
+        } else
+        {
+            SpawnPlayerServerRpc();
         }
+        /* if (IsOwner && IsLocalPlayer)
+        {
+            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+            playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
+            gameObject.transform.position = playerSpawningPoint.position;
+        } */
     }
 }
