@@ -7,8 +7,8 @@ using UnityEngine.UI;
 
 public class bulletScript : NetworkBehaviour
 {
-    [SerializeField] float bulletVelocity;
-    [SerializeField] int bulletDamage = 25;
+    [SerializeField] private float bulletVelocity;
+    [SerializeField] private int bulletDamage = 25;
 
     // Start is called before the first frame update
     void Start()
@@ -90,7 +90,6 @@ public class bulletScript : NetworkBehaviour
         {
             playerToDamage.playerHealth.Value -= damage;
         }
- 
 
         NotifyHealthChangedClientRpc(playerToDamage.playerHealth.Value, new ClientRpcParams
         {
@@ -104,12 +103,32 @@ public class bulletScript : NetworkBehaviour
     [ClientRpc]
     public void NotifyHealthChangedClientRpc(int playerHealth, ClientRpcParams clientRpcParams = default)
     {
-        GameObject.Find("Life").GetComponent<TMP_Text>().text = playerHealth >= 0 ? playerHealth.ToString() : "0";
+        GameObject canvas = GameObject.Find("Canvas");
+        GameObject life = FindRecursive(canvas, "Life");
+        if (life)
+        {
+            life.GetComponent<TMP_Text>().text = playerHealth >= 0 ? playerHealth.ToString() : "0";
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void KillAPlayerServerRpc(ulong clientId)
     {
         Debug.Log("client id to kill : " + clientId);
+    }
+
+    private static GameObject FindRecursive(GameObject obj, string search)
+    {
+        GameObject result = null;
+        foreach (Transform child in obj.transform)
+        {
+            if (child.name.Equals(search)) return child.gameObject;
+
+            result = FindRecursive(child.gameObject, search);
+
+            if (result) break;
+        }
+
+        return result;
     }
 }
