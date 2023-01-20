@@ -81,8 +81,6 @@ public class SlidingScript : MonoBehaviour
             slideTimer -= Time.deltaTime;
         }
 
-        
-
         if (slideTimer <= 0)
             StopSlide();
     }

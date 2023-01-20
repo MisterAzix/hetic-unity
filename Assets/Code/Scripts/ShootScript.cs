@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -12,26 +13,19 @@ public class ShootScript : NetworkBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (IsOwner && Input.GetMouseButtonDown(0))
         {
-            if (IsOwner)
-            {
-                ShootServerRpc();
-            }
-
-           
+            ShootServerRpc();
         }
-
     }
   
-
     [ServerRpc]
     private void ShootServerRpc()
     {
+        Debug.Log($"[{DateTime.Now.ToString("HH:mm:ss\\Z")}] {OwnerClientId}: Shoot!");
         GameObject projectile = Instantiate(bullet, firePosition.position, cam.rotation);
-        projectile.GetComponent<NetworkObject>().Spawn(true);
+        NetworkObject projectileNetworkObject = projectile.GetComponent<NetworkObject>();
+        projectileNetworkObject.Spawn(true);
+        projectileNetworkObject.ChangeOwnership(OwnerClientId);
     }
-
-   
-
 }

@@ -12,8 +12,6 @@ public class bulletScript : NetworkBehaviour
     void Start()
     {
         Rigidbody projectileRB = gameObject.GetComponent<Rigidbody>();
-
-
         Vector3 forceToAdd = gameObject.transform.forward * bulletVelocity;
 
         projectileRB.AddForce(forceToAdd, ForceMode.Impulse);
@@ -29,17 +27,17 @@ public class bulletScript : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-
-        if (collision.gameObject.tag == "Player" && IsOwner)
+        Debug.Log("BulletScript - OnCollisionEnter");
+        if (collision.gameObject.tag == "Player")
         {
-            var playerHit = collision.gameObject.GetComponent<NetworkObject>();
-            UpdatePlayerHealthServerRpc(25, playerHit.OwnerClientId);
-        }
-        if (IsOwner)
-        {
-            DestroyBulletServerRpc();
+            NetworkObject playerHit = collision.gameObject.GetComponent<NetworkObject>();
+            if (OwnerClientId != playerHit.OwnerClientId)
+            {
+                UpdatePlayerHealthServerRpc(25, playerHit.OwnerClientId);
+            }
         }
 
+        DestroyBulletServerRpc();
     }
 
     /* private void CheckHit()
@@ -82,14 +80,13 @@ public class bulletScript : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayerHealthServerRpc(int damage, ulong clientId)
     {
-        var owner = NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject;
+        //var owner = NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject;
         var playerToDamage = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject.GetComponent<PlayerStats>();
         var playerToKill = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
 
         if (playerToDamage != null && playerToDamage.playerHealth.Value > 0)
         {
             playerToDamage.playerHealth.Value -= damage;
-
         }
  
 
@@ -106,15 +103,11 @@ public class bulletScript : NetworkBehaviour
     public void NotifyHealthChangedClientRpc( int playerHealth, ClientRpcParams clientRpcParams = default)
     {
 
-
-
     }
 
     [ServerRpc(RequireOwnership = false)]
     public void KillAPlayerServerRpc(ulong clientId)
     {
         Debug.Log("client id to kill : " + clientId);
-        
-
     }
 }

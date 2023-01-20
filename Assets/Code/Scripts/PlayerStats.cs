@@ -4,6 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Unity.Collections;
 using TMPro;
+using System;
 
 public class PlayerStats : NetworkBehaviour
 {
@@ -28,7 +29,8 @@ public class PlayerStats : NetworkBehaviour
 
     private void HealthOnValueChanged(int prevHealth, int nextHealth)
     {
-        Debug.Log("prevHealth : " + prevHealth + "newtHealth : " + nextHealth + "ClientId" + OwnerClientId);
+        Debug.Log($"[{DateTime.Now.ToString("HH:mm:ss\\Z")}] {OwnerClientId}: now have {nextHealth}hp!");
+        //Debug.Log(OwnerClientId + "-> prevHealth : " + prevHealth + "newtHealth : " + nextHealth + "ClientId");
         if (nextHealth <= 0)
         {
             KillPlayer();
@@ -44,6 +46,7 @@ public class PlayerStats : NetworkBehaviour
 
     private void KillPlayer()
     {
+        Debug.Log($"[{DateTime.Now.ToString("HH:mm:ss\\Z")}] {OwnerClientId}: Died!");
         transform.GetComponent<playerMovement>().enabled = false;
         transform.GetChild(0).GetComponent<PlayerCameraMovement>().enabled = false;
         transform.GetComponent<ShootScript>().enabled = false;

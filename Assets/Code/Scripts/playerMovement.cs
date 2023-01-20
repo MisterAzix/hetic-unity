@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -71,14 +72,13 @@ public class playerMovement : NetworkBehaviour
         
         spawningPointsArr = GameObject.FindGameObjectsWithTag("SpawningPoint");
         spawningPoints = new List<GameObject>(spawningPointsArr);
-        int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+        int spawningPositionIndex = UnityEngine.Random.Range(0, spawningPoints.Count);
 
-        if(IsOwner&& IsLocalPlayer)
+        if(IsOwner && IsLocalPlayer)
         {
             playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
             transform.position = playerSpawningPoint.position;
-            Debug.Log("spawning !");
-
+            Debug.Log($"[{DateTime.Now.ToString("HH:mm:ss\\Z")}] {OwnerClientId}: Spawning!");
         }
 
         spawningPoints.RemoveAt(spawningPositionIndex);
@@ -244,7 +244,7 @@ public class playerMovement : NetworkBehaviour
     {
         if (IsOwner)
         {
-            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+            int spawningPositionIndex = UnityEngine.Random.Range(0, spawningPoints.Count);
             playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
             transform.position = playerSpawningPoint.position;
             spawningPoints.RemoveAt(spawningPositionIndex);
@@ -257,7 +257,7 @@ public class playerMovement : NetworkBehaviour
     {
         if (IsLocalPlayer)
         {
-            int spawningPositionIndex = Random.Range(0, spawningPoints.Count);
+            int spawningPositionIndex = UnityEngine.Random.Range(0, spawningPoints.Count);
             playerSpawningPoint = spawningPoints[spawningPositionIndex].transform;
             transform.position = playerSpawningPoint.position;
         } else

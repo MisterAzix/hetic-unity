@@ -14,7 +14,7 @@ public class ServerScript : MonoBehaviour
 #if !UNITY_EDITOR && UNITY_SERVER
         UnityTransport unityTransport = NetworkManager.Singleton.gameObject.GetComponent<UnityTransport>();
         unityTransport.SetConnectionData(serverIP, (ushort)serverPORT);
-        Debug.Log($"Setting up transport  connection to {unityTransport.ConnectionData.Address}: {unityTransport.ConnectionData.Port}");
+        Debug.Log($"Setting up transport connection to {unityTransport.ConnectionData.Address}:{unityTransport.ConnectionData.Port}");
 
         NetworkManager.Singleton.StartServer();
 #endif
