@@ -200,8 +200,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6c0943eb3256b31b419a45d221a368, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensX: 200
-  sensY: 200
+  sensX: 500
+  sensY: 500
   player: {fileID: 7601803230581162137}
   gunPosition: {fileID: 4239183470328706560}
 --- !u!114 &8607814543266890481
