@@ -7,11 +7,13 @@ using Unity.Networking.Transport;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class NetworkManagerUI : MonoBehaviour
+public class NetworkManagerUI : NetworkBehaviour
 {
     [SerializeField] private Button hostBtn;
     [SerializeField] private Button clientBtn;
     [SerializeField] private TMP_InputField serverInput;
+    // [SerializeField] private TMP_InputField playerNameInputField;
+    // [SerializeField] private GameObject mainMenuUI;
 
     [SerializeField] private string serverIP = "51.38.33.24";
     [SerializeField] private int serverPORT = 4242;
@@ -52,4 +54,16 @@ public class NetworkManagerUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+
+    // private void AssignPlayerName()
+    // {
+    //     Debug.Log("playerName : " + playerNameInputField.text + "ownerId" + OwnerClientId);
+    //     var playerStats = NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject.GetComponent<PlayerStats>();
+    //     playerStats.networkPlayerName.Value = playerNameInputField.text;
+    //     NetworkObject.Despawn(true);
+    //     Destroy(gameObject);
+    //     // transform.GetChild(0).gameObject.SetActive(false);
+
+
+    // }
 }
