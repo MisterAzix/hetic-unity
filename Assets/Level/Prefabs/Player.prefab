@@ -538,6 +538,7 @@ MonoBehaviour:
         byte0060: 0
         byte0061: 0
   playerName: {fileID: 2677922592013009780}
+  healthText: {fileID: 0}
 --- !u!1 &8522208699560867738
 GameObject:
   m_ObjectHideFlags: 0

@@ -26,6 +26,9 @@ public class ShootScript : NetworkBehaviour
         GameObject projectile = Instantiate(bullet, firePosition.position, cam.rotation);
         NetworkObject projectileNetworkObject = projectile.GetComponent<NetworkObject>();
         projectileNetworkObject.Spawn(true);
-        projectileNetworkObject.ChangeOwnership(OwnerClientId);
+        if (projectileNetworkObject.OwnerClientId != OwnerClientId)
+        {
+            projectileNetworkObject.ChangeOwnership(OwnerClientId);
+        }
     }
 }

@@ -14,14 +14,12 @@ public class PlayerStats : NetworkBehaviour
     [SerializeField] public NetworkVariable<FixedString64Bytes> networkPlayerName = new NetworkVariable<FixedString64Bytes>("");
     [SerializeField] private TMP_Text playerName;
 
-
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
         /* if (IsOwner)
         {
             AssignPlayerNameServerRpc();
-            StartCoroutine(DestroyMenu());
         } */
         playerHealth.OnValueChanged += HealthOnValueChanged;
         // networkPlayerName.OnValueChanged += HandlePlayerNameChanged;
@@ -29,19 +27,11 @@ public class PlayerStats : NetworkBehaviour
 
     private void HealthOnValueChanged(int prevHealth, int nextHealth)
     {
-        Debug.Log($"[{DateTime.Now.ToString("HH:mm:ss\\Z")}] {OwnerClientId}: now have {nextHealth}hp!");
         //Debug.Log(OwnerClientId + "-> prevHealth : " + prevHealth + "newtHealth : " + nextHealth + "ClientId");
         if (nextHealth <= 0)
         {
             KillPlayer();
         }
-    }
-
-    private IEnumerator DestroyMenu()
-    {
-        yield return new WaitForSeconds(.3f);
-        GameObject.Find("NetworkManagerUI").SetActive(false);
-
     }
 
     private void KillPlayer()
@@ -64,13 +54,28 @@ public class PlayerStats : NetworkBehaviour
         transform.GetChild(0).GetComponent<PlayerCameraMovement>().enabled = true;
         transform.GetComponent<ShootScript>().enabled = true;
 
-        ResetHealthServerRpc();
+        ResetHealthServerRpc(OwnerClientId);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void ResetHealthServerRpc()
+    private void ResetHealthServerRpc(ulong clientId)
     {
         playerHealth.Value = maxPlayerHealth;
+
+        NotifyHealthChangedClientRpc(maxPlayerHealth, new ClientRpcParams
+        {
+            Send = new ClientRpcSendParams
+            {
+                TargetClientIds = new ulong[] { clientId }
+            }
+        });
+    }
+
+
+    [ClientRpc]
+    public void NotifyHealthChangedClientRpc(int playerHealth, ClientRpcParams clientRpcParams = default)
+    {
+        GameObject.Find("Life").GetComponent<TMP_Text>().text = playerHealth >= 0 ? playerHealth.ToString() : "0";
     }
 
     /* [ServerRpc(RequireOwnership = false)]

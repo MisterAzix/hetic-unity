@@ -12,6 +12,7 @@ public class NetworkManagerUI : NetworkBehaviour
     [SerializeField] private Button hostBtn;
     [SerializeField] private Button clientBtn;
     [SerializeField] private TMP_InputField serverInput;
+    [SerializeField] private GameObject gameUI;
     // [SerializeField] private TMP_InputField playerNameInputField;
     // [SerializeField] private GameObject mainMenuUI;
 
@@ -53,6 +54,7 @@ public class NetworkManagerUI : NetworkBehaviour
     private void HandleClientConnected(ulong clientId)
     {
         gameObject.SetActive(false);
+        gameUI.SetActive(true);
     }
 
     // private void AssignPlayerName()

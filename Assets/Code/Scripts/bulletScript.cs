@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class bulletScript : NetworkBehaviour
 {
@@ -100,9 +102,9 @@ public class bulletScript : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void NotifyHealthChangedClientRpc( int playerHealth, ClientRpcParams clientRpcParams = default)
+    public void NotifyHealthChangedClientRpc(int playerHealth, ClientRpcParams clientRpcParams = default)
     {
-
+        GameObject.Find("Life").GetComponent<TMP_Text>().text = playerHealth >= 0 ? playerHealth.ToString() : "0";
     }
 
     [ServerRpc(RequireOwnership = false)]
