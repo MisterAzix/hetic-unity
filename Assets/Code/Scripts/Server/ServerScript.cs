@@ -6,10 +6,8 @@ using UnityEngine;
 
 public class ServerScript : MonoBehaviour
 {
-    [SerializeField]
-    private string serverIP = "51.38.33.24";
-    [SerializeField]
-    private int serverPORT = 4242;
+    [SerializeField] private string serverIP = "51.38.33.24";
+    [SerializeField] private int serverPORT = 4242;
 
     void Start()
     {
