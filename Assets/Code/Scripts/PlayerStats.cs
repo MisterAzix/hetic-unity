@@ -17,11 +17,11 @@ public class PlayerStats : NetworkBehaviour
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
-        if (IsOwner)
+        /* if (IsOwner)
         {
             AssignPlayerNameServerRpc();
             StartCoroutine(DestroyMenu());
-        }
+        } */
         playerHealth.OnValueChanged += HealthOnValueChanged;
         // networkPlayerName.OnValueChanged += HandlePlayerNameChanged;
     }
@@ -70,10 +70,10 @@ public class PlayerStats : NetworkBehaviour
         playerHealth.Value = maxPlayerHealth;
     }
 
-    [ServerRpc]
+    /* [ServerRpc(RequireOwnership = false)]
     private void AssignPlayerNameServerRpc()
     {
         networkPlayerName.Value = GameObject.Find("InputName").GetComponent<TMP_InputField>().text;
         playerName.text = networkPlayerName.Value.ToString();
-    }
+    } */
 }

@@ -239,7 +239,7 @@ public class playerMovement : NetworkBehaviour
         return Vector3.ProjectOnPlane(direction, slopeHit.normal).normalized;
     }
 
-    [ServerRpc(RequireOwnership =false)]
+    [ServerRpc(RequireOwnership = false)]
     public void SpawnPlayerServerRpc()
     {
         if (IsOwner)

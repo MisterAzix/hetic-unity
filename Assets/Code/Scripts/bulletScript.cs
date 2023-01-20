@@ -65,7 +65,7 @@ public class bulletScript : NetworkBehaviour
         }
     } */
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void DestroyBulletServerRpc()
     {
         gameObject.GetComponent<NetworkObject>().Despawn();
@@ -78,8 +78,8 @@ public class bulletScript : NetworkBehaviour
 
         DestroyBulletServerRpc();
     }
-   
-    [ServerRpc]
+
+    [ServerRpc(RequireOwnership = false)]
     public void UpdatePlayerHealthServerRpc(int damage, ulong clientId)
     {
         var owner = NetworkManager.Singleton.ConnectedClients[OwnerClientId].PlayerObject;
@@ -110,7 +110,7 @@ public class bulletScript : NetworkBehaviour
 
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void KillAPlayerServerRpc(ulong clientId)
     {
         Debug.Log("client id to kill : " + clientId);
